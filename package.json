@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+   "browserslist": ["> 1%", "Android >= 4.2", "ios >= 9"],
   "scripts": {
     "watch": "webpack --progress --watch",
     "start": "webpack-dev-server --open --config webpack.local.js --host 0.0.0.0",
     "dev": "webpack --config webpack.dev.js",
     "test": "webpack --config webpack.test.js",
-    "build": "webpack --config webpack.prod.js",
-    "update_common": "rm -r -f node_modules/front-common & rm -r -f node_modules/_front-common@1.0.1@front-common & cnpm i"
+    "build": "webpack --config webpack.prod.js"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
@@ -65,7 +65,6 @@
     "core-js": "^2.6.5",
     "cropper": "^4.0.0",
     "fastclick": "^1.0.6",
-    "front-common": "git+ssh://git@git.wb-intra.com:web_group/front-common.git",
     "hls.js": "^0.12.4",
     "jquery": "^2.2.4",
     "jquery-touchswipe": "^1.6.19",
