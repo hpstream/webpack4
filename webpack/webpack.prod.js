@@ -7,22 +7,23 @@ const CleanWebpackPlugin = require('clean-webpack-plugin')
 const fs = require('fs');
 const common = require('./webpack.common.js');
 
-const basicPath = process.cwd().substring(process.cwd().lastIndexOf(path.sep) + 1);
-const publicPath = "https://qiniuh5.wodidashi.com/web/" + basicPath + "/"; //dev环境js和css的路径
+const config = require('../config/index.js');
+const root = config.common.root;
 
 const cleanOptions = "./build"; //需要清除的目录
-const MyPlugin = require("./plugins/myplugin.js");
-
+const Rem = require("../plugins/rem.js")
 module.exports = function () {
     return merge(common, {
         mode: 'production',
         output: {
-            publicPath: publicPath
+            publicPath: config.prod.publicPath
         },
         plugins: [
-            new CleanWebpackPlugin(cleanOptions),
+            new CleanWebpackPlugin(cleanOptions, {
+                root: root
+            }),
             new ParallelUglifyPlugin({
-                 cacheDir: '.cache/',
+                cacheDir: '.cache/',
                 // Optional regex, or array of regex to match file against. Only matching files get minified.
                 // Defaults to /.js$/, any f÷
 
@@ -44,9 +45,7 @@ module.exports = function () {
                 }
             }),
             new OptimizeCssAssetsPlugin(),
-            new MyPlugin({
-                options: publicPath
-            })
+            new Rem()
         ]
     })
 };
