@@ -7,37 +7,27 @@ const CleanWebpackPlugin = require('clean-webpack-plugin')
 const fs = require('fs');
 const common = require('./webpack.common.js');
 
-const basicPath = process.cwd().substring(process.cwd().lastIndexOf(path.sep) + 1);
-const publicPath = "https://t1.kuaishebao.com/web/" + basicPath + "/"; //dev环境js和css的路径
-
+const config = require('../config/index.js');
+const root = config.common.root;
 const cleanOptions = "./build"; //需要清除的目录
-const MyPlugin = require("./plugins/myplugin.js");
-const vConsole = require("./plugins/vConsole.js");
+const vConsole = require("../plugins/vConsole.js");
+const Rem = require("../plugins/rem.js");
 module.exports = function () {
 	return merge(common, {
 		mode: 'production',
+		optimization:{
+			// minimize:false
+		},
 		output: {
-			publicPath: publicPath
+			publicPath: config.prod.publicPath
 		},
 		plugins: [
-			new CleanWebpackPlugin(cleanOptions),
-			new ParallelUglifyPlugin({
-				cacheDir: '.cache/',
-				// Optional regex, or array of regex to match file against. Only matching files get minified.
-				// Defaults to /.js$/, any f÷
-
-				uglifyES: {
-					// These pass straight through to uglify-es.
-					// Cannot be used with uglifyJS.
-					// uglify-es is a version of uglify that understands newer es6 syntax. You should use this option if the
-					// files that you're minifying do not need to run in older browsers/versions of node.
-				}
+			new CleanWebpackPlugin(cleanOptions,{
+				root: root
 			}),
 			new OptimizeCssAssetsPlugin(),
-			new MyPlugin({
-				options: publicPath
-			}),
-			new vConsole()
+			new vConsole(),
+			new Rem()
 		]
 	})
 };

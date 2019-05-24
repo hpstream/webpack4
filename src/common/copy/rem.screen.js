@@ -4,20 +4,12 @@
 ! function (win, doc) {
   var htmlDom = doc.getElementsByTagName("html")[0];
   var resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize';
-  var clientW = document.documentElement.clientWidth || document.body.clientWidth;
-  var clientH = document.documentElement.clientHeight || document.body.clientHeight;
-
-  var r = clientW / clientH;
-  var originR = 640 / 1040;
-  var width = 0;
-  if (r >= originR) {
-    width = clientH * originR
-  } else {
-    width = clientW
-  }
   var recalc = function () {
-
-    htmlDom.style.fontSize = width / 10 + 'px';
+    var htmlWidth = doc.documentElement.clientWidth || doc.body.clientWidth;
+    if (htmlWidth > 550) {
+      htmlWidth = parseInt(htmlWidth * 0.85);
+    }
+    htmlDom.style.fontSize = htmlWidth / 10 + 'px';
   }
 
   if (!doc.addEventListener) return;

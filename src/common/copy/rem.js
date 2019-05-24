@@ -6,9 +6,6 @@
 	var resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize';
 	var recalc = function() {
 		var htmlWidth = doc.documentElement.clientWidth || doc.body.clientWidth;
-		if (htmlWidth > 550) {
-			htmlWidth = parseInt(htmlWidth * 0.85);
-		}
 		htmlDom.style.fontSize = htmlWidth / 10 + 'px';
 	}
 
