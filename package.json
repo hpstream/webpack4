@@ -1,0 +1,26 @@
+{
+  "name": "webpack4",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "webpack01": "webpack",
+    "webpack01_1": "webpack --config webpack/01/webpack.base.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hpstream/webpack4.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hpstream/webpack4/issues"
+  },
+  "homepage": "https://github.com/hpstream/webpack4#readme",
+  "devDependencies": {
+    "webpack": "^4.34.0",
+    "webpack-cli": "^3.3.4"
+  }
+}
