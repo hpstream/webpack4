@@ -1,5 +1,3 @@
-
-
 function js2(source) {
 console.log('------------------------------------');
 console.log('我爱的我的国家');
