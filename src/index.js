@@ -1,2 +1,2 @@
-var s = require('./index1.js')
+require('./1.less');
 console.log("1")

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "webpack01": "webpack",
+    "webpack01": "webpack --config webpack.config.js",
     "webpack01_1": "webpack --config webpack/01/webpack.base.js"
   },
   "repository": {
@@ -24,6 +24,8 @@
     "@babel/parser": "^7.5.0",
     "@babel/traverse": "^7.5.0",
     "@babel/types": "^7.5.0",
+    "less": "^3.9.0",
+    "tapable": "^1.1.3",
     "webpack": "^4.34.0",
     "webpack-cli": "^3.3.4"
   }
