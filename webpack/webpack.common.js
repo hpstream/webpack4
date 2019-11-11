@@ -5,10 +5,16 @@ const flatten = require('array-flatten')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HappyPack = require('happypack');
+const Defaulconfig = require("../plugins/defaultconfig.js");
+const createInfo = require("../plugins/createInfo.js");
+var babelConfig = require('../babel.config.js');
 const {
     entriesarr,
     configPlugins
 } = require('./util/util');
+const getParame = require('./util/getParame.js');
+var isLocalEnv = getParame.npm_lifecycle_event === 'start';
+// console.log(isLocalEnv);
 const {
     common
 } = require('../config/index.js');
@@ -16,11 +22,27 @@ const root = common.root;
 
 const {
     VueLoaderPlugin
-} = require('vue-loader')
+} = require('vue-loader');
+// console.log(VueLoaderPlugin);
 const os = require('os')
 const happyThreadPool = HappyPack.ThreadPool({
     size: os.cpus().length
 })
+
+function resolve(dir) {
+    return path.join(__dirname, '..', dir)
+}
+
+const createLintingRule = () => ({
+    test: /\.(js|vue)$/,
+    loader: 'eslint-loader',
+    enforce: 'pre',
+    include: [path.resolve(root, 'src')],
+    options: {
+        formatter: require('eslint-friendly-formatter')
+    }
+})
+
 const config = {
     entry: entriesarr,
     output: {
@@ -29,14 +51,22 @@ const config = {
             var chunkName = chunk.chunk.name;
             // console.log('===')
             // console.log(chunkName)
-            return `${chunks(chunkName, 'js')}.[contenthash:8].js`;
+            return `${chunks(chunkName, 'js')}.[contenthash:10].js`;
         },
         publicPath: '/'
+    },
+    resolve: {
+        alias: {
+            "@src": path.resolve(root, 'src')
+        }
     },
     module: {
         rules: [{
                 test: /\.(html|php)$/,
-                loader: 'html-loader' //处理图片
+                loader: 'html-loader', //处理图片
+                options: {
+                    attrs: ['img:src', 'video:poster', 'video:src', 'source:src']
+                }
             },
             {
                 test: /\.(js)$/,
@@ -45,12 +75,21 @@ const config = {
                 include: [/(src)/, /(node_modules)/],
                 use: 'happypack/loader?id=happy-babel-js', // 增加新的HappyPack构建loader
             },
+            ...(isLocalEnv ? [createLintingRule()] : []),
             {
                 test: /\.(css)$/,
                 use: [
                     MiniCssExtractPlugin.loader,
                     'css-loader',
-                    'postcss-loader'
+                    'less-loader',
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            config: {
+                                path: path.join(__dirname, '../')
+                            }
+                        }
+                    },
                 ]
             },
             {
@@ -60,8 +99,15 @@ const config = {
                         options: {}
                     },
                     'css-loader',
-                    'postcss-loader',
-                    'less-loader'
+                    'less-loader',
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            config: {
+                                path: path.join(__dirname, '../')
+                            }
+                        }
+                    },
                 ]
             },
             {
@@ -80,28 +126,29 @@ const config = {
                         limit: 8192,
                         name: function (file) {
                             var filename = file.replace(path.resolve(root, 'src') + path.sep, ''); //去掉路径
-                             
+
                             filename = filename.split('.')[0] //去掉扩展名部分
                             // console.log(filename);
                             // console.log(file);
-                            
-                            return filename + '.[hash:8].[ext]';
+
+                            return filename + '.[hash:10].[ext]';
                         }
                     }
                 }]
             },
             {
-                test: /\.(mp3|mp4)$/,
+                test: /\.(m3u8|mp3|mp4)$/,
                 use: [{
-                    loader: 'file-loader',
+                    loader: 'url-loader',
                     options: {
+                        limit: 1,
                         name: function (file) {
                             console.log('fileloader....')
                             var filename = file.replace(path.resolve(root, 'src') + path.sep, ''); //去掉路径
 
-                             filename = filename.split('.')[0] //去掉扩展名部分
-                             // console.log(filename);
-                            return filename + '.[hash:8].[ext]';
+                            filename = filename.split('.')[0] //去掉扩展名部分
+                            // console.log(filename);
+                            return filename + '.[hash:10].[ext]';
                         }
                     }
                 }]
@@ -120,17 +167,23 @@ const config = {
     optimization: {
         splitChunks: {
             cacheGroups: {
-                nocommon: {
+                static: { // 将第三方模块提取出来
+                    // test: /(node_modules)/,
+
+                    // test: /(node_modules)/,
+                    // test: /node_modules\/(?!front-common)/,
                     test: (module, chunk) => {
-                        if (module.resource) {
-                            return module.resource.includes('node_modules') && !module.resource.includes('front-common');
+                        if (module.resource && module.resource.includes('node_modules')) {
+                            var staticarr = ['vue/dist/vue.min.js', 'fastclick', 'core-js']
+                            return staticarr.some((value) => {
+                                return module.resource.includes(value)
+                            })
                         }
                     },
                     chunks: 'initial',
-                    name: 'nocommon',
-                    filename: 'nocommon.[hash:8].js',
+                    name: 'static',
+                    filename: 'static.[contenthash:10].js',
                     priority: 10, // 优先
-                    enforce: true
                 },
                 common: { // 将第三方模块提取出来
                     // test: /(node_modules)/,
@@ -138,19 +191,20 @@ const config = {
                     // test: /(node_modules)/,
                     // test: /node_modules\/(?!front-common)/,
                     test: (module, chunk) => {
-                        if (module.resource) {                         
+                        if (module.resource) {
                             return module.resource.includes('node_modules') && module.resource.includes('front-common');
                         }
                     },
                     chunks: 'initial',
                     name: 'common',
-                    filename: 'common.[hash:8].js',
+                    filename: 'common.[hash:10].js',
                     priority: 10, // 优先
                     enforce: true
                 }
             }
         }
     },
+
     plugins: [
         new VueLoaderPlugin(),
         new CopyWebpackPlugin([{
@@ -167,14 +221,15 @@ const config = {
 
         }),
         new MiniCssExtractPlugin({
-            filename: '[name].[hash:8].css',
+            filename: '[name].[hash:10].css',
             chunkFilename: "[id].css"
         }),
         new webpack.HashedModuleIdsPlugin(),
         new HappyPack({
             id: 'happy-babel-js',
             loaders: [{
-                loader: 'babel-loader'
+                loader: 'babel-loader',
+                options: babelConfig
                 // options: {
                 //     presets: ['@babel/preset-env'] // presets设置的就是当前js的版本
                 //     // babelrc:true
@@ -182,7 +237,7 @@ const config = {
             }],
             threadPool: happyThreadPool
         })
-    ].concat(configPlugins)
+    ].concat(configPlugins).concat(new Defaulconfig(), new createInfo())
 }
 //生成不同的chunk name
 function chunks(item, type) {

@@ -9,9 +9,8 @@ const common = require('./webpack.common.js');
 
 const config = require('../config/index.js');
 const root = config.common.root;
-
+const seen = new Set();
 const cleanOptions = "./build"; //需要清除的目录
-const Rem = require("../plugins/rem.js")
 module.exports = function () {
     return merge(common, {
         mode: 'production',
@@ -22,6 +21,34 @@ module.exports = function () {
             new CleanWebpackPlugin(cleanOptions, {
                 root: root
             }),
+            new webpack.NamedChunksPlugin(chunk => {
+                if (chunk.name) {
+                    return chunk.name
+                }
+                const modules = Array.from(chunk.modulesIterable)
+                if (modules.length > 1) {
+                    const hash = require('hash-sum')
+                    var joinedHashstring = modules.map(m => {
+                        if (!m._buildHash) {
+                            return m.content;
+                        }
+                        return m._buildHash
+                    }).join('_');
+
+                    var joinedHash = hash(joinedHashstring);
+
+                    while (seen.has(joinedHash)) {
+                        joinedHashstring += Math.random();
+                        joinedHash = hash(joinedHashstring);
+                    }
+                    seen.add(joinedHash)
+                    return `modules-${joinedHash}`
+                } else {
+                    return modules[0].id
+                }
+            }),
+            // keep module.id stable when vender modules does not change
+            new webpack.HashedModuleIdsPlugin(),
             new ParallelUglifyPlugin({
                 cacheDir: '.cache/',
                 // Optional regex, or array of regex to match file against. Only matching files get minified.
@@ -44,24 +71,7 @@ module.exports = function () {
                     }
                 }
             }),
-            new OptimizeCssAssetsPlugin(),
-            new Rem()
+            new OptimizeCssAssetsPlugin()
         ]
     })
 };
-
-// const webpack = require('webpack');
-// const merge = require('webpack-merge');
-// const path = require('path');
-
-// module.exports = function(){
-// 	const test = require('./webpack.dev.js');
-// 	const basicPath = process.cwd().substring(process.cwd().lastIndexOf(path.sep)+1);
-// 	const publicPath = "https://qiniuh5.wodidashi.com/web/"+basicPath+"/";
-// 	return merge(test, {
-// 		mode: 'production',
-// 		output: {
-// 			publicPath: publicPath
-// 		}
-// 	})
-// };

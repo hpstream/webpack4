@@ -2,15 +2,24 @@
  * 功能：存放不同文件的打包区别
  */
 const path = require('path');
+var dirname = process.cwd().split(path.sep).pop() + path.sep;
+var cwd = process.cwd();
 module.exports = {
-  common:{
-    // entry: path.resolve('./src'),
-    root: path.resolve(__dirname,'../')// 根目录
+  common: {
+    entry: path.resolve(cwd, 'src'),
+    root: path.resolve(cwd, ) // 根目录
   },
-  test:{
-    publicPath: 'https://t1.zhuhuiyao.cn/web/front-app/'
+  test: {
+    publicPath: 'https://t1.zhuhuiyao.cn/web/' + dirname
   },
-  prod:{
-    publicPath: 'https://qiniuh5.wodidashi.com/web/'
+  testoverseas: {
+    publicPath: './'
+  },
+  prod: {
+    // https://qiniuh5.wodidashi.com
+    publicPath: 'https://qiniuh5.wodidashi.com/web/' + dirname
+  },
+  develop:{
+    publicPath: 'https://tdev.kuaishebao.com/web/' + dirname
   }
 }

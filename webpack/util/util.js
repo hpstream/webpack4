@@ -3,9 +3,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const flatten = require('array-flatten');
 const {common} = require('../../config/index.js');
+const  getParame = require('./getParame.js');
 var root = common.root;
-
-
 // path.resolve();
 // 遍历自定目录生成 入口文件 entry
 //构建上面说的 entries 结构
@@ -15,7 +14,7 @@ var entries = [];
 //   'app/advise/index',
 //   'app/webpack-test/index',
 // ]
-walkingTree([path.resolve(root, 'src')]).map(file => {
+walkingTree([path.resolve(common.entry)]).map(file => {
  
   if (file.match(/\.(html|php)$/)) {
     var entry = file.replace(path.resolve(root, 'src') + path.sep, ''); //去掉路径里前面的部分
@@ -24,7 +23,16 @@ walkingTree([path.resolve(root, 'src')]).map(file => {
   }
 })
 
-// console.log(entries);
+if (getParame['npm_config_filter']) {
+  var startfiles = [];
+  entries.forEach(filesurl => {
+    if (filesurl.indexOf(getParame['npm_config_filter']) > -1) {
+      startfiles.push(filesurl);
+    }
+  })
+  entries = startfiles;
+}
+console.log(entries);
 var entriesarr = injectEntry(entries);
 var configPlugins = injectHtml(entries);
 
@@ -73,9 +81,9 @@ function injectHtml(entries) {
   entries.forEach((item) => {
     const ext = fs.existsSync(`src${path.sep}${item}.php`) ? 'php' : 'html';
     const htmlPlugin = new HtmlWebpackPlugin({
-      filename: path.resolve('build',`.${path.sep}${item}.html`),
+      filename: path.resolve('build', `.${path.sep}${item}.${ext}`),
       template: `src${path.sep}${item}.${ext}`,
-      chunks: [item, 'common', 'nocommon'], //这里针对每个 entry 找到对应的js的chunk(通过chunks函数 )
+      chunks: [item, 'common', 'static'], //这里针对每个 entry 找到对应的js的chunk(通过chunks函数 )
       chunksSortMode: "manual",
       minify: true,
       xhtml: true,
@@ -85,6 +93,7 @@ function injectHtml(entries) {
   });
   return configPlugins;
 }
+// console.log(entriesarr)
 // console.log(configPlugins)
 module.exports = {
   entriesarr,

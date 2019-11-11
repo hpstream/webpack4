@@ -11,38 +11,51 @@ const config = require('../config/index.js');
 const root = config.common.root;
 const cleanOptions = "./build"; //需要清除的目录
 const vConsole = require("../plugins/vConsole.js");
-const Rem = require("../plugins/rem.js");
+const seen = new Set();
+var flga = true;
 module.exports = function () {
 	return merge(common, {
-		mode: 'production',
-		optimization:{
+		mode: 'development',
+		optimization: {
 			// minimize:false
 		},
 		output: {
-			publicPath: config.prod.publicPath
+			publicPath: config.test.publicPath
 		},
 		plugins: [
-			new CleanWebpackPlugin(cleanOptions,{
+			new CleanWebpackPlugin(cleanOptions, {
 				root: root
 			}),
+			new webpack.NamedChunksPlugin(chunk => {
+				if (chunk.name) {
+					return chunk.name
+				}
+				const modules = Array.from(chunk.modulesIterable)
+				if (modules.length > 1) {
+					const hash = require('hash-sum')
+					var joinedHashstring = modules.map(m => {
+						if (!m._buildHash) {
+							return m.content;
+						}
+						return m._buildHash
+					}).join('_');
+
+					var joinedHash = hash(joinedHashstring);
+
+					while (seen.has(joinedHash)) {
+						joinedHashstring += Math.random();
+						joinedHash = hash(joinedHashstring);					
+					}
+					seen.add(joinedHash)
+					return `modules-${joinedHash}`
+				} else {
+					return modules[0].id
+				}
+			}),
+			// keep module.id stable when vender modules does not change
+			new webpack.HashedModuleIdsPlugin(),
 			new OptimizeCssAssetsPlugin(),
-			new vConsole(),
-			new Rem()
+			new vConsole()
 		]
 	})
 };
-
-// const merge = require('webpack-merge');
-
-// module.exports = function () {
-// 	const dev = require('./webpack.dev.js');
-// 	console.log(dev().output.publicPath)
-// 	const publicPath = dev().output.publicPath.replace(/tdev.kuaishebao.com/, "qiniuh5.wodidashi.com"); //测试环境js和css的路径
-
-// 	return merge(dev, {
-// 		mode: 'development',
-// 		output: {
-// 			publicPath: publicPath
-// 		}
-// 	})
-// };
