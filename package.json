@@ -9,8 +9,7 @@
     "start": "webpack-dev-server --open --config webpack/webpack.local.js --host 0.0.0.0",
     "dev": "webpack --config webpack/webpack.develop.js",
     "test": "webpack --config webpack/webpack.test.js",
-    "build": "webpack --config webpack/webpack.prod.js",
-    "update_common": "rm -r -f node_modules/front-common & rm -r -f node_modules/_front-common@1.0.1@front-common & cnpm i"
+    "build": "webpack --config webpack/webpack.prod.js"
   },
   "husky": {
     "hooks": {
@@ -70,7 +69,6 @@
     "eslint-plugin-html": "^5.0.5",
     "eslint-plugin-vue": "^5.2.2",
     "file-loader": "^2.0.0",
-    "front-common": "git+ssh://git@git.wb-intra.com:web_group/front-common.git",
     "happypack": "^5.0.1",
     "hash-sum": "^1.0.2",
     "high-pxtorem": "^1.0.2",
