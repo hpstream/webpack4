@@ -244,7 +244,7 @@ const config = {
             }],
             threadPool: happyThreadPool
         })
-    ].concat(new Defaulconfig(), new createInfo())
+    ]
 }
 //生成不同的chunk name
 function chunks(item, type) {

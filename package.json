@@ -30,7 +30,8 @@
     "wbWebpack": "./index.js"
   },
   "devDependencies": {
-    "ts-loader": "^6.2.1"
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.2"
   },
   "dependencies": {
     "@babel/core": "^7.0.0",

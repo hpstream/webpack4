@@ -28,7 +28,7 @@ module.exports = function (proxyUrl) {
 			}),
 			new HtmlWebpackPlugin({
 				template: './src/index.html',
-				chunksSortMode: "manual",
+				chunks: ['main'],
 				minify: true,
 				xhtml: true,
 			}),
