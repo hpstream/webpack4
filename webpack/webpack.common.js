@@ -60,7 +60,10 @@ const config = {
     resolve: {
         alias: {
             "@src": path.resolve(root, 'src')
-        }
+        },
+        extensions: [
+              '.ts', '.js'
+        ]
     },
     module: {
         rules: [{
