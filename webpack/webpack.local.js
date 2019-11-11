@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const vConsole = require("../plugins/vConsole.js");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = function (proxyUrl) {
 	const common = require('./webpack.common.js');
 	return merge(common, {
@@ -25,7 +26,13 @@ module.exports = function (proxyUrl) {
 					'NODE_ENV': JSON.stringify('dev')
 				}
 			}),
-			new vConsole()
+			new HtmlWebpackPlugin({
+				template: './src/index.html',
+				chunksSortMode: "manual",
+				minify: true,
+				xhtml: true,
+			}),
+			// new vConsole()
 		]
 	})
 };

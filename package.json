@@ -29,7 +29,9 @@
   "bin": {
     "wbWebpack": "./index.js"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "ts-loader": "^6.2.1"
+  },
   "dependencies": {
     "@babel/core": "^7.0.0",
     "@babel/plugin-proposal-class-properties": "^7.0.0",
