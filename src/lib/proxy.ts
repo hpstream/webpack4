@@ -1,16 +1,4 @@
-/**
- * [proxy description]
- *
- * @param   {[type]}  resource:      [源对象]
- * @param   {[type]}  target:        [目标对象]
- *
- * @return  {[type]}                 [return description]
- */
-export function proxy(
-  resource: Record<string, any>,
-  target: Record<string, any>
-) :void
-
+import { getType } from "./utils";
 
 export function proxy(
   resource: Record<string, any>,
@@ -18,8 +6,26 @@ export function proxy(
   descriptor: PropertyDescriptor
 ): void;
 
+export function proxy(
+  resource: Record<string, any>,
+  target: Record<string, any>
+): void;
 
 
-export function proxy():void{
+export function proxy(resource: Record<string, any>, targetOrkey: Record<string, any> | string, descriptor?: PropertyDescriptor):void{
 
+  if (getType(targetOrkey) === "object") {
+    for (const key in resource) {
+      proxy(targetOrkey as Record<string, any>, key, {
+        get: function getProxyData(){return resource[key]},
+        set: function setProxyData(newVal){ resource[key] = newVal}
+      });
+    }
+    return;
+  }
+  Object.defineProperty(resource, targetOrkey as string, {
+    enumerable: true,
+    configurable: true,
+    ...descriptor
+  });
 }
