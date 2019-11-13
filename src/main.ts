@@ -10,6 +10,7 @@ var app = new MVVM({
   methods: {
     click() {
       this.value = "我是大哥";
+      console.log(1)
     }
   }
 });

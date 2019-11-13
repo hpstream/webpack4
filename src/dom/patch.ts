@@ -17,7 +17,7 @@ function patchFactory(modules: IModuleHook[] = []): (oldVnode: any, vnode: VNode
     for (const item of modules) {
         hooks.forEach(hookKey => item[hookKey] && cbs[hookKey].push(item[hookKey]));
     }
-
+    console.log(cbs);
     function createElm(vnode: VNode): Element {
         // 注释节点
         if (vnode.type === '!') {

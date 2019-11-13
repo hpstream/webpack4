@@ -53,7 +53,7 @@ export default class MVVM {
       }
      var lastVnode =  this.$el;
      var vnode = this.$options.render.call(this,h);
-
+      console.log(vnode);
      patch(lastVnode, vnode);
   }
 }
