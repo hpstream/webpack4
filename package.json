@@ -29,7 +29,10 @@
   "bin": {
     "wbWebpack": "./index.js"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.2"
+  },
   "dependencies": {
     "@babel/core": "^7.0.0",
     "@babel/plugin-proposal-class-properties": "^7.0.0",
@@ -88,6 +91,7 @@
     "postcss-loader": "^3.0.0",
     "postcss-url": "^8.0.0",
     "shelljs": "^0.8.3",
+    "snabbdom": "^0.7.3",
     "style-loader": "^0.23.1",
     "stylelint": "^10.0.1",
     "stylelint-config-standard": "^18.3.0",

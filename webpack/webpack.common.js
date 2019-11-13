@@ -44,7 +44,9 @@ const createLintingRule = () => ({
 })
 
 const config = {
-    entry: entriesarr,
+    entry: {
+        main:'./src/main.ts'
+    },
     output: {
         path: path.resolve(root, './build'),
         filename: function (chunk) {
@@ -58,7 +60,10 @@ const config = {
     resolve: {
         alias: {
             "@src": path.resolve(root, 'src')
-        }
+        },
+        extensions: [
+              '.ts', '.js'
+        ]
     },
     module: {
         rules: [{
@@ -74,6 +79,11 @@ const config = {
                 // include: [/(src)/, /(node_modules\/front-common)/],
                 include: [/(src)/, /(node_modules)/],
                 use: 'happypack/loader?id=happy-babel-js', // 增加新的HappyPack构建loader
+            },
+            {
+                test: /\.ts$/,
+                exclude: /node_modules/,
+                use: ['happypack/loader?id=happy-babel-js', 'ts-loader']
             },
             ...(isLocalEnv ? [createLintingRule()] : []),
             {
@@ -237,7 +247,7 @@ const config = {
             }],
             threadPool: happyThreadPool
         })
-    ].concat(configPlugins).concat(new Defaulconfig(), new createInfo())
+    ]
 }
 //生成不同的chunk name
 function chunks(item, type) {
