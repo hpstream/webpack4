@@ -1,5 +1,6 @@
 import { ENodeType } from "../enums";
 import AST, { parseElement2AST } from './AST';
+import htmlCompiler from "../../Compiler/htmlCompiler";
 
 const spFn = '__spVnode__';
 
@@ -20,6 +21,7 @@ export default class Compile {
         wrap.innerHTML = template.trim();
 
         const node = wrap.children[0];
+        new htmlCompiler(node);
         // console.log(template)
         const ast = parseElement2AST(node);
         // console.log(ast)
