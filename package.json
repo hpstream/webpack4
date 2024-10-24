@@ -98,7 +98,7 @@
     "stylelint-order": "^3.0.0",
     "uglifyjs-webpack-plugin": "^0.4.6",
     "url-loader": "^1.1.1",
-    "vue": "2.6.0",
+    "vue": "3.0.0",
     "vue-loader": "^15.4.2",
     "vue-template-compiler": "2.6.0",
     "webpack": "4.16.5",
